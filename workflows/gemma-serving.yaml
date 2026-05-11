@@ -13,23 +13,25 @@ spec:
   inputs:
     parameters: []
   template:
+    apiVersion: "serving.kserve.io/v1beta1"
     metadata:
       annotations:
         autoscaling.knative.dev/minScale: "1"
         autoscaling.knative.dev/maxScale: "1"
     spec:
-      imagePullSecrets:
-        - name: gcr-secret
-      containers:
-        - name: gemma4-container
-          image: us-central1-docker.pkg.dev/vmstest-371514/gemma-repo/gemma4-aicore:latest
-          ports:
-            - containerPort: 8080
-              protocol: TCP
-          resources:
-            requests:
-              cpu: "2"
-              memory: "12Gi"
-            limits:
-              cpu: "4"
-              memory: "14Gi"
+      predictor:
+        imagePullSecrets:
+          - name: gcr-secret
+        containers:
+          - name: gemma4-container
+            image: us-central1-docker.pkg.dev/vmstest-371514/gemma-repo/gemma4-aicore:latest
+            ports:
+              - containerPort: 8080
+                protocol: TCP
+            resources:
+              requests:
+                cpu: "2"
+                memory: "12Gi"
+              limits:
+                cpu: "4"
+                memory: "14Gi"
