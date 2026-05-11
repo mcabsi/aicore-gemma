@@ -1,0 +1,35 @@
+apiVersion: ai.sap.com/v1alpha1
+kind: ServingTemplate
+metadata:
+  name: gemma4-serving
+  annotations:
+    scenarios.ai.sap.com/name: "Gemma4 Serving"
+    executables.ai.sap.com/name: "gemma4-server"
+    executables.ai.sap.com/description: "Gemma 4 E2B serving with llama.cpp"
+  labels:
+    scenarios.ai.sap.com/id: "gemma4-scenario"
+    ai.sap.com/version: "1.0.0"
+spec:
+  inputs:
+    parameters: []
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "1"
+        autoscaling.knative.dev/maxScale: "1"
+    spec:
+      imagePullSecrets:
+        - name: gcr-secret
+      containers:
+        - name: gemma4-container
+          image: us-central1-docker.pkg.dev/vmstest-371514/gemma-repo/gemma4-aicore:latest
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources:
+            requests:
+              cpu: "2"
+              memory: "12Gi"
+            limits:
+              cpu: "4"
+              memory: "14Gi"
