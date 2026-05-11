@@ -4,34 +4,31 @@ metadata:
   name: gemma4-serving
   annotations:
     scenarios.ai.sap.com/name: "Gemma4 Serving"
+    scenarios.ai.sap.com/description: "Gemma 4 E2B on SAP AI Core"
     executables.ai.sap.com/name: "gemma4-server"
     executables.ai.sap.com/description: "Gemma 4 E2B serving with llama.cpp"
   labels:
     scenarios.ai.sap.com/id: "gemma4-scenario"
     ai.sap.com/version: "1.0.0"
 spec:
-  inputs:
-    parameters: []
   template:
     apiVersion: "serving.kserve.io/v1beta1"
     metadata:
-      annotations:
-        autoscaling.knative.dev/minScale: "1"
-        autoscaling.knative.dev/maxScale: "1"
-    spec:
+      annotations: |
+        autoscaling.knative.dev/metric: concurrency
+        autoscaling.knative.dev/target: 1
+        autoscaling.knative.dev/targetBurstCapacity: 0
+      labels: |
+        ai.sap.com/resourcePlan: infer.s
+    spec: |
       predictor:
         imagePullSecrets:
           - name: gcr-secret
+        minReplicas: 1
+        maxReplicas: 1
         containers:
-          - name: gemma4-container
+          - name: kserve-container
             image: us-central1-docker.pkg.dev/vmstest-371514/gemma-repo/gemma4-aicore:latest
             ports:
               - containerPort: 8080
                 protocol: TCP
-            resources:
-              requests:
-                cpu: "2"
-                memory: "12Gi"
-              limits:
-                cpu: "4"
-                memory: "14Gi"
